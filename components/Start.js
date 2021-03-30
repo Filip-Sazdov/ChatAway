@@ -1,14 +1,33 @@
 import React from "react";
-import { View, ImageBackground, Text, TouchableOpacity, TextInput, StyleSheet } from "react-native";
-
+import { View, ImageBackground, Text, TouchableOpacity, TextInput, StyleSheet, Alert } from "react-native";
 import { Icon } from "react-native-elements";
 
 export default class Start extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = { name: "" };
+		this.state = {
+			name: "",
+			bgcolor: "",
+		};
 	}
 	render() {
+		// This factory function will build all color "buttons" and assign the correct background color to them programatically.
+		// It will also change the state for the bgcolor because we want to pass it to the Chat screen as props using the navigation
+		const factoriseBgProps = (bgcolorinfunc) => {
+			return (
+				<TouchableOpacity
+					key={bgcolorinfunc}
+					style={{
+						width: 40,
+						height: 40,
+						borderRadius: 20,
+						backgroundColor: bgcolorinfunc,
+					}}
+					onPress={() => this.setState({ bgcolor: bgcolorinfunc })}
+				></TouchableOpacity>
+			);
+		};
+
 		return (
 			<View style={styles.container}>
 				<ImageBackground source={require("../assets/background-image.png")} style={styles.image}>
@@ -37,6 +56,7 @@ export default class Start extends React.Component {
 								<Icon name="user" type="antdesign" color="gray" style={{ marginLeft: 15, marginRight: 10 }} />
 								<TextInput
 									style={{
+										flex: 0.95,
 										color: "#757083",
 										opacity: 0.5,
 										fontWeight: "300",
@@ -61,10 +81,7 @@ export default class Start extends React.Component {
 									Choose Background Color:
 								</Text>
 								<View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
-									<View style={{ width: 40, height: 40, backgroundColor: "#090C08", borderRadius: 20 }}></View>
-									<View style={{ width: 40, height: 40, backgroundColor: "#474056", borderRadius: 20 }}></View>
-									<View style={{ width: 40, height: 40, backgroundColor: "#8A95A5", borderRadius: 20 }}></View>
-									<View style={{ width: 40, height: 40, backgroundColor: "#B9C6AE", borderRadius: 20 }}></View>
+									{["#090C08", "#474056", "#8A95A5", "#B9C6AE"].map(factoriseBgProps)}
 								</View>
 							</View>
 							<TouchableOpacity
@@ -75,7 +92,16 @@ export default class Start extends React.Component {
 									color: "#ffffff",
 									justifyContent: "center",
 								}}
-								onPress={() => this.props.navigation.navigate("Chat", { name: this.state.name })}
+								onPress={() => {
+									if (this.state.name === "") {
+										Alert.alert("Please input a name!");
+									} else if (this.state.bgcolor === "") {
+										Alert.alert("Please select a color!");
+									} else {
+										this.props.navigation.navigate("Chat", { name: this.state.name, bgcolor: this.state.bgcolor });
+										this.setState({ name: "" });
+									}
+								}}
 							>
 								<Text
 									style={{
