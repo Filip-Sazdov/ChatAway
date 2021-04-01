@@ -99,7 +99,7 @@ export default class Start extends React.Component {
 										Alert.alert("Please select a color!");
 									} else {
 										this.props.navigation.navigate("Chat", { name: this.state.name, bgcolor: this.state.bgcolor });
-										this.setState({ name: "" });
+										this.setState({ name: "", bgcolor: "" });
 									}
 								}}
 							>
