@@ -8,6 +8,7 @@ import {
 	StyleSheet,
 	Alert,
 	KeyboardAvoidingView,
+	Platform,
 } from "react-native";
 import { Icon } from "react-native-elements";
 
