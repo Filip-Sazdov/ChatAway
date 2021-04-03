@@ -10,8 +10,7 @@ export default class Chat extends React.Component {
 		};
 	}
 	componentDidMount() {
-		let name = this.props.route.params.name; // OR use destructuring
-		// let { name } = this.props.route.params;
+		let { name, bgcolor } = this.props.route.params; // use destructuring
 		this.props.navigation.setOptions({ title: name });
 
 		this.setState({
@@ -28,7 +27,7 @@ export default class Chat extends React.Component {
 				},
 				{
 					_id: 2,
-					text: "This is a system message",
+					text: `${name} has entered the chat.`,
 					createdAt: new Date(),
 					system: true,
 				},
@@ -47,7 +46,7 @@ export default class Chat extends React.Component {
 				{...props}
 				wrapperStyle={{
 					right: {
-						backgroundColor: "#000",
+						backgroundColor: this.props.route.params.bgcolor === "#090C08" ? "#474056" : "#090C08",
 					},
 				}}
 			/>
@@ -67,9 +66,20 @@ export default class Chat extends React.Component {
 						_id: 1,
 					}}
 				/>
-
+				{/* check if android and do not let keyboard cover input field */}
 				{Platform.OS === "android" ? <KeyboardAvoidingView behavior="height" /> : null}
 			</View>
+
+			// <TouchableOpacity
+			// 	accessible={true}
+			// 	accessibilityLabel="More options"
+			// 	accessibilityHint="Lets you choose to send an image or your geolocation."
+			// 	accessibilityRole="button"
+			// 	onPress={this._onPress}>
+			// 	<View style={styles.button}>
+			// 	...
+			// 	</View>
+			// </TouchableOpacity>
 
 			// <View
 			// 	style={{
