@@ -1,5 +1,14 @@
 import React from "react";
-import { View, ImageBackground, Text, TouchableOpacity, TextInput, StyleSheet, Alert } from "react-native";
+import {
+	View,
+	ImageBackground,
+	Text,
+	TouchableOpacity,
+	TextInput,
+	StyleSheet,
+	Alert,
+	KeyboardAvoidingView,
+} from "react-native";
 import { Icon } from "react-native-elements";
 
 export default class Start extends React.Component {
@@ -98,8 +107,8 @@ export default class Start extends React.Component {
 									} else if (this.state.bgcolor === "") {
 										Alert.alert("Please select a color!");
 									} else {
-										this.props.navigation.navigate("Chat", { name: this.state.name, bgcolor: this.state.bgcolor });
-										this.setState({ name: "", bgcolor: "" });
+										this.props.navigation.navigate("Chat", { name: this.state.name, bgcolor: this.state.bgcolor }); //pass name and background color as props to the Chat view
+										this.setState({ name: "", bgcolor: "" }); // clear the state for name and background color so the user has to input it.
 									}
 								}}
 							>
@@ -117,6 +126,7 @@ export default class Start extends React.Component {
 						</View>
 					</View>
 				</ImageBackground>
+				{Platform.OS === "android" ? <KeyboardAvoidingView behavior="height" /> : null}
 			</View>
 		);
 	}
