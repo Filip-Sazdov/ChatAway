@@ -1,5 +1,5 @@
 import React from "react";
-import { View, KeyboardAvoidingView, Platform } from "react-native";
+import { View, KeyboardAvoidingView, Platform, Text } from "react-native";
 import { GiftedChat, Bubble } from "react-native-gifted-chat";
 
 const firebase = require("firebase");
@@ -10,10 +10,10 @@ export default class Chat extends React.Component {
 		super();
 		this.state = {
 			messages: [],
-			uid: user.uid,
+			uid: '',
 			loggedInText: '',
 		};
-		// Your web app's Firebase configuration
+		// Firebase configuration
 		const firebaseConfig = {
 			apiKey: "AIzaSyD_TfZ3Lyysf2HRFhvqdYWVPDjJxgsM_cc",
 			authDomain: "chataway-d7aa1.firebaseapp.com",
@@ -45,13 +45,18 @@ export default class Chat extends React.Component {
 				user: data.user,
 			});
 		});
+		this.setState({
+			messages
+		})
 	}
 
 	addMessage() {
+		const data = this.state.messages[0]
+		console.log(data)
 		this.referenceChatMessages.add({
 			_id: data._id,
 			text: data.text,
-			createdAt: data.createdAt.toDate(),
+			createdAt: data.createdAt,
 			user: data.user,
 		});
 	}
@@ -67,8 +72,7 @@ export default class Chat extends React.Component {
 
 			//update user state with currently active user data
 			this.setState({
-				uid: user.uid,
-				messages: [],
+				uid: user._uid,
 			});
 
 			this.unsubscribe = this.referenceChatMessages
@@ -81,26 +85,26 @@ export default class Chat extends React.Component {
 		let { name, bgcolor } = this.props.route.params; // use destructuring
 		this.props.navigation.setOptions({ title: name });
 
-		this.setState({
-			messages: [
-				{
-					_id: 1,
-					text: "Hello developer",
-					createdAt: new Date(),
-					user: {
-						_id: 2,
-						name: "React Native",
-						avatar: "https://placeimg.com/140/140/any",
-					},
-				},
-				{
-					_id: 2,
-					text: `${name} has entered the chat.`,
-					createdAt: new Date(),
-					system: true,
-				},
-			],
-		});
+		// this.setState({
+		// 	messages: [
+		// 		{
+		// 			_id: 1,
+		// 			text: "Hello developer",
+		// 			createdAt: new Date(),
+		// 			user: {
+		// 				_id: 2,
+		// 				name: "React Native",
+		// 				avatar: "https://placeimg.com/140/140/any",
+		// 			},
+		// 		},
+		// 		{
+		// 			_id: 2,
+		// 			text: `${name} has entered the chat.`,
+		// 			createdAt: new Date(),
+		// 			system: true,
+		// 		},
+		// 	],
+		// });
 	}
 
 	componentWillUnmount() {
