@@ -24,12 +24,9 @@ export default class Chat extends React.Component {
 			measurementId: "G-2ZBCT0H56B"
 		};
 		// Initialize Firebase
-		// firebase.initializeApp(firebaseConfig);
-
 		if (!firebase.apps.length) {
 			firebase.initializeApp(firebaseConfig);
 		}
-		this.referenceChatMessages = firebase.firestore().collection("messages");
 	}
 
 	onCollectionUpdate = (querySnapshot) => {
@@ -50,20 +47,10 @@ export default class Chat extends React.Component {
 		})
 	}
 
-	addMessage() {
-		const data = this.state.messages[0]
-		console.log(data)
-		this.referenceChatMessages.add({
-			_id: data._id,
-			text: data.text,
-			createdAt: data.createdAt,
-			user: data.user,
-		});
-	}
+
 
 	componentDidMount() {
 		this.referenceChatMessages = firebase.firestore().collection("messages");
-		this.unsubscribe = this.referenceChatMessages.onSnapshot(this.onCollectionUpdate)
 
 		this.authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
 			if (!user) {
@@ -113,11 +100,12 @@ export default class Chat extends React.Component {
 	}
 
 	onSend(messages = []) {
+		// the commented-out code below seems redundant, app works without it.
+		// this.setState((previousState) => ({
+		// 	messages: GiftedChat.append(previousState.messages, messages),
+		// }));
 
-		this.setState((previousState) => ({
-			messages: GiftedChat.append(previousState.messages, messages),
-		}));
-		this.addMessage();
+		messages.forEach(message => this.referenceChatMessages.add(message));
 	}
 
 	renderBubble(props) {
