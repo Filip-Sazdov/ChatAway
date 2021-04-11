@@ -17,7 +17,7 @@ export default class Start extends React.Component {
 		super(props);
 		this.state = {
 			name: "",
-			bgcolor: "",
+			bgcolor: "#090C08",
 		};
 	}
 	render() {
@@ -27,12 +27,11 @@ export default class Start extends React.Component {
 			return (
 				<TouchableOpacity
 					key={bgcolorinfunc}
-					style={{
-						width: 40,
-						height: 40,
-						borderRadius: 20,
-						backgroundColor: bgcolorinfunc,
-					}}
+					style={[
+						{ backgroundColor: bgcolorinfunc },
+						styles.defaultForColorCircles,
+						this.state.bgcolor === bgcolorinfunc && styles.colorCirclesSelected,
+					]}
 					onPress={() => this.setState({ bgcolor: bgcolorinfunc })}
 				></TouchableOpacity>
 			);
@@ -109,7 +108,7 @@ export default class Start extends React.Component {
 										Alert.alert("Please select a color!");
 									} else {
 										this.props.navigation.navigate("Chat", { name: this.state.name, bgcolor: this.state.bgcolor }); //pass name and background color as props to the Chat view
-										this.setState({ name: "", bgcolor: "" }); // clear the state for name and background color so the user has to input it.
+										this.setState({ name: "" }); // clear the state for name so the user has to input it.
 									}
 								}}
 							>
@@ -164,5 +163,18 @@ const styles = StyleSheet.create({
 		fontWeight: "600",
 		color: "#ffffff",
 		marginTop: 30,
+	},
+	defaultForColorCircles: {
+		width: 40,
+		height: 40,
+		borderRadius: 20,
+		padding: 10,
+	},
+	colorCirclesSelected: {
+		borderWidth: 3,
+		borderColor: "#D5FFF3",
+		borderStyle: "solid",
+		transform: [{ scale: 1.5 }],
+		// outline,
 	},
 });
