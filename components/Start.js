@@ -12,6 +12,8 @@ import {
 } from "react-native";
 import { Icon } from "react-native-elements";
 
+console.ignoredYellowBox = ["Setting a timer"];
+
 export default class Start extends React.Component {
 	constructor(props) {
 		super(props);
@@ -20,11 +22,13 @@ export default class Start extends React.Component {
 			bgcolor: "#090C08",
 		};
 	}
+
 	render() {
 		// This factory function will build all color "buttons" and assign the correct background color to them programatically.
 		// It will also change the state for the bgcolor because we want to pass it to the Chat screen as props using the navigation
 		const factoriseBgProps = (bgcolorinfunc) => {
 			return (
+				// This creates the outer rings for the default background selectors
 				<TouchableOpacity
 					key={bgcolorinfunc}
 					style={[
@@ -33,7 +37,18 @@ export default class Start extends React.Component {
 						this.state.bgcolor === bgcolorinfunc && styles.colorCirclesSelected,
 					]}
 					onPress={() => this.setState({ bgcolor: bgcolorinfunc })}
-				></TouchableOpacity>
+				>
+					{/* This creates the inner circles of background selectors */}
+					<View
+						key={bgcolorinfunc}
+						style={[
+							{ backgroundColor: bgcolorinfunc },
+							{ zIndex: 1 },
+							styles.defaultForSmallerCircles,
+							this.state.bgcolor === bgcolorinfunc && styles.colorCirclesSelected,
+						]}
+					></View>
+				</TouchableOpacity>
 			);
 		};
 
@@ -143,7 +158,7 @@ const styles = StyleSheet.create({
 		justifyContent: "space-evenly",
 	},
 	box1: {
-		flex: 0.44,
+		flex: 0.33,
 		alignItems: "center",
 		// alignContent: "center", //how does this not work for the content that is within the box???
 		// justifyContent: "center",//how does this not work for the content that is within the box???
@@ -171,10 +186,17 @@ const styles = StyleSheet.create({
 		padding: 10,
 	},
 	colorCirclesSelected: {
-		borderWidth: 3,
-		borderColor: "#D5FFF3",
+		borderWidth: 2,
+		borderColor: "#fff",
 		borderStyle: "solid",
 		transform: [{ scale: 1.5 }],
-		// outline,
+	},
+	defaultForSmallerCircles: {
+		width: "100%",
+		height: "100%",
+		borderRadius: 50,
+		// padding: 10,
+		// borderColor: "#fff",
+		// borderWidth: 1,
 	},
 });
