@@ -1,6 +1,9 @@
 import React from "react";
-import { View, KeyboardAvoidingView, Platform, Text } from "react-native";
-import { GiftedChat, Bubble } from "react-native-gifted-chat";
+import { View, KeyboardAvoidingView, Platform, Text, Alert } from "react-native";
+import { GiftedChat, Bubble, InputToolbar } from "react-native-gifted-chat";
+
+import AsyncStorage from '@react-native-community/async-storage';
+import NetInfo from '@react-native-community/netinfo';
 
 console.ignoredYellowBox = [
 	'Setting a timer'
@@ -15,7 +18,7 @@ export default class Chat extends React.Component {
 		this.state = {
 			messages: [],
 			uid: '',
-			loggedInText: '',
+			isConnected: true,
 		};
 		// Firebase configuration
 		const firebaseConfig = {
@@ -51,30 +54,68 @@ export default class Chat extends React.Component {
 		})
 	}
 
+	async getMessages() {
+		let messages = '';
+		try {
+			messages = await AsyncStorage.getItem('messages') || [];
+			this.setState({
+				messages: JSON.parse(messages)
+			});
+		} catch (error) {
+			console.log(error.message);
+		}
+	};
 
+	async saveMessages() {
+		try {
+			await AsyncStorage.setItem('messages', JSON.stringify(this.state.messages));
+		} catch (error) {
+			console.log(error.message);
+		}
+	}
+
+	async deleteMessages() {
+		try {
+			await AsyncStorage.removeItem('messages');
+			this.setState({
+				messages: []
+			})
+		} catch (error) {
+			console.log(error.message);
+		}
+	}
 
 	componentDidMount() {
-		this.referenceChatMessages = firebase.firestore().collection("messages");
+		NetInfo.fetch().then(connection => {
+			if (connection.isConnected) {
+				this.referenceChatMessages = firebase.firestore().collection("messages");
 
-		this.authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
-			if (!user) {
-				await firebase.auth().signInAnonymously();
+				this.authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
+					if (!user) {
+						await firebase.auth().signInAnonymously();
+					}
+
+					//update user state with currently active user data
+					this.setState({
+						uid: user._uid,
+					});
+
+					this.unsubscribe = this.referenceChatMessages
+						.orderBy("createdAt", "desc")
+						.onSnapshot(this.onCollectionUpdate);
+
+				});
+				this.getMessages();
+			} else {
+				Alert.alert("You are offline, no messages can be sent!");
 			}
-
-			//update user state with currently active user data
-			this.setState({
-				uid: user._uid,
-			});
-
-			this.unsubscribe = this.referenceChatMessages
-				.orderBy("createdAt", "desc")
-				.onSnapshot(this.onCollectionUpdate);
-
 		});
 
 
-		let { name, bgcolor } = this.props.route.params; // use destructuring
+		let { name } = this.props.route.params; // use destructuring
 		this.props.navigation.setOptions({ title: name });
+
+
 
 		// this.setState({
 		// 	messages: [
@@ -103,13 +144,21 @@ export default class Chat extends React.Component {
 		this.authUnsubscribe();
 	}
 
-	onSend(messages = []) {
-		// the commented-out code below seems redundant, app works without it.
-		// this.setState((previousState) => ({
-		// 	messages: GiftedChat.append(previousState.messages, messages),
-		// }));
+	// onSend(messages = []) {
+	// the commented-out code below seems redundant, app works without it.
+	// this.setState((previousState) => ({
+	// 	messages: GiftedChat.append(previousState.messages, messages),
+	// }));
 
-		messages.forEach(message => this.referenceChatMessages.add(message));
+	// 	messages.forEach(message => this.referenceChatMessages.add(message));
+	// }
+
+	onSend(messages = []) {
+		this.setState(previousState => ({
+			messages: GiftedChat.append(previousState.messages, messages),
+		}), () => {
+			this.saveMessages();
+		});
 	}
 
 	renderBubble(props) {
@@ -125,18 +174,30 @@ export default class Chat extends React.Component {
 		);
 	}
 
+	renderInputToolbar(props) {
+		if (this.state.isConnected === false) {
+		} else {
+			return (
+				<InputToolbar
+					{...props}
+				/>
+			);
+		}
+	}
+
 	render() {
-		let { name, bgcolor } = this.props.route.params; //destructure props and use as variables
+		let { bgcolor } = this.props.route.params; //destructure props and use as variables
 
 		return (
 			<View style={{ flex: 1, backgroundColor: bgcolor }}>
 				<Text>{this.state.loggedInText}</Text>
 				<GiftedChat
 					renderBubble={this.renderBubble.bind(this)}
+					renderInputToolbar={this.renderInputToolbar.bind(this)}
 					messages={this.state.messages}
 					onSend={(messages) => this.onSend(messages)}
 					user={{
-						_id: 1,
+						_id: this.state.uid,
 					}}
 				/>
 				{/* check if android and do not let keyboard cover input field */}
@@ -147,3 +208,5 @@ export default class Chat extends React.Component {
 		);
 	}
 }
+
+// const db = new Dexie('MessagesDatabase');
