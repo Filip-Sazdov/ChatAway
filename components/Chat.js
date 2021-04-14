@@ -154,6 +154,8 @@ export default class Chat extends React.Component {
 	// }
 
 	onSend(messages = []) {
+		messages.forEach(message => this.referenceChatMessages.add(message));
+
 		this.setState(previousState => ({
 			messages: GiftedChat.append(previousState.messages, messages),
 		}), () => {
@@ -197,7 +199,7 @@ export default class Chat extends React.Component {
 					messages={this.state.messages}
 					onSend={(messages) => this.onSend(messages)}
 					user={{
-						_id: this.state.uid,
+						_id: 1,
 					}}
 				/>
 				{/* check if android and do not let keyboard cover input field */}
