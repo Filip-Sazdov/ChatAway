@@ -105,8 +105,12 @@ export default class Chat extends React.Component {
 						.onSnapshot(this.onCollectionUpdate);
 
 				});
-				this.getMessages();
+
 			} else {
+				this.setState({
+					isConnected: false,
+				});
+				this.getMessages();
 				Alert.alert("You are offline, no messages can be sent!");
 			}
 		});
@@ -210,5 +214,3 @@ export default class Chat extends React.Component {
 		);
 	}
 }
-
-// const db = new Dexie('MessagesDatabase');
