@@ -16,7 +16,11 @@ export default class Chat extends React.Component {
 		this.state = {
 			messages: [],
 			uid: "",
-			isConnected: true,
+			user: {
+				_id: "",
+				name: "",
+			},
+			isConnected: null,
 		};
 		// Firebase configuration
 		const firebaseConfig = {
@@ -84,10 +88,13 @@ export default class Chat extends React.Component {
 	}
 
 	componentDidMount() {
+		// use netinfo to check if machine is online or offline
 		NetInfo.fetch().then((connection) => {
 			if (connection.isConnected) {
+				// connect to messages collection
 				this.referenceChatMessages = firebase.firestore().collection("messages");
 
+				// this unfortunatelly named method (authUnsubscribe) listens for changes in auth state and signs in user if no user is already signed in.
 				this.authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
 					if (!user) {
 						await firebase.auth().signInAnonymously();
@@ -95,7 +102,12 @@ export default class Chat extends React.Component {
 
 					//update user state with currently active user data
 					this.setState({
-						uid: user._uid,
+						uid: user._id,
+						user: {
+							_id: user.uid,
+							name: name,
+							avatar: "http://placeimg.com/140/140/any",
+						},
 					});
 
 					this.unsubscribe = this.referenceChatMessages
