@@ -2,12 +2,10 @@ import React from "react";
 import { View, KeyboardAvoidingView, Platform, Text, Alert } from "react-native";
 import { GiftedChat, Bubble, InputToolbar } from "react-native-gifted-chat";
 
-import AsyncStorage from '@react-native-community/async-storage';
-import NetInfo from '@react-native-community/netinfo';
+import AsyncStorage from "@react-native-community/async-storage";
+import NetInfo from "@react-native-community/netinfo";
 
-console.ignoredYellowBox = [
-	'Setting a timer'
-]
+console.ignoredYellowBox = ["Setting a timer"];
 
 const firebase = require("firebase");
 require("firebase/firestore");
@@ -17,7 +15,7 @@ export default class Chat extends React.Component {
 		super();
 		this.state = {
 			messages: [],
-			uid: '',
+			uid: "",
 			isConnected: true,
 		};
 		// Firebase configuration
@@ -28,7 +26,7 @@ export default class Chat extends React.Component {
 			storageBucket: "chataway-d7aa1.appspot.com",
 			messagingSenderId: "745169961622",
 			appId: "1:745169961622:web:4c7f7117f2b63ea36f38b7",
-			measurementId: "G-2ZBCT0H56B"
+			measurementId: "G-2ZBCT0H56B",
 		};
 		// Initialize Firebase
 		if (!firebase.apps.length) {
@@ -50,25 +48,25 @@ export default class Chat extends React.Component {
 			});
 		});
 		this.setState({
-			messages
-		})
-	}
+			messages,
+		});
+	};
 
 	async getMessages() {
-		let messages = '';
+		let messages = "";
 		try {
-			messages = await AsyncStorage.getItem('messages') || [];
+			messages = (await AsyncStorage.getItem("messages")) || [];
 			this.setState({
-				messages: JSON.parse(messages)
+				messages: JSON.parse(messages),
 			});
 		} catch (error) {
 			console.log(error.message);
 		}
-	};
+	}
 
 	async saveMessages() {
 		try {
-			await AsyncStorage.setItem('messages', JSON.stringify(this.state.messages));
+			await AsyncStorage.setItem("messages", JSON.stringify(this.state.messages));
 		} catch (error) {
 			console.log(error.message);
 		}
@@ -76,17 +74,17 @@ export default class Chat extends React.Component {
 
 	async deleteMessages() {
 		try {
-			await AsyncStorage.removeItem('messages');
+			await AsyncStorage.removeItem("messages");
 			this.setState({
-				messages: []
-			})
+				messages: [],
+			});
 		} catch (error) {
 			console.log(error.message);
 		}
 	}
 
 	componentDidMount() {
-		NetInfo.fetch().then(connection => {
+		NetInfo.fetch().then((connection) => {
 			if (connection.isConnected) {
 				this.referenceChatMessages = firebase.firestore().collection("messages");
 
@@ -103,9 +101,8 @@ export default class Chat extends React.Component {
 					this.unsubscribe = this.referenceChatMessages
 						.orderBy("createdAt", "desc")
 						.onSnapshot(this.onCollectionUpdate);
-
 				});
-
+				this.saveMessages();
 			} else {
 				this.setState({
 					isConnected: false,
@@ -115,11 +112,8 @@ export default class Chat extends React.Component {
 			}
 		});
 
-
 		let { name } = this.props.route.params; // use destructuring
 		this.props.navigation.setOptions({ title: name });
-
-
 
 		// this.setState({
 		// 	messages: [
@@ -158,13 +152,16 @@ export default class Chat extends React.Component {
 	// }
 
 	onSend(messages = []) {
-		messages.forEach(message => this.referenceChatMessages.add(message));
+		messages.forEach((message) => this.referenceChatMessages.add(message));
 
-		this.setState(previousState => ({
-			messages: GiftedChat.append(previousState.messages, messages),
-		}), () => {
-			this.saveMessages();
-		});
+		this.setState(
+			(previousState) => ({
+				messages: GiftedChat.append(previousState.messages, messages),
+			}),
+			() => {
+				this.saveMessages();
+			}
+		);
 	}
 
 	renderBubble(props) {
@@ -183,11 +180,7 @@ export default class Chat extends React.Component {
 	renderInputToolbar(props) {
 		if (this.state.isConnected === false) {
 		} else {
-			return (
-				<InputToolbar
-					{...props}
-				/>
-			);
+			return <InputToolbar {...props} />;
 		}
 	}
 
@@ -209,8 +202,6 @@ export default class Chat extends React.Component {
 				{/* check if android and do not let keyboard cover input field */}
 				{Platform.OS === "android" ? <KeyboardAvoidingView behavior="height" /> : null}
 			</View>
-
-
 		);
 	}
 }
