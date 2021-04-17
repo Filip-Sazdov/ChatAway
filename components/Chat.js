@@ -57,9 +57,8 @@ export default class Chat extends React.Component {
 	};
 
 	async getMessages() {
-		let messages = "";
 		try {
-			messages = (await AsyncStorage.getItem("messages")) || [];
+			const messages = (await AsyncStorage.getItem("messages")) || "[]";
 			this.setState({
 				messages: JSON.parse(messages),
 			});
@@ -150,8 +149,8 @@ export default class Chat extends React.Component {
 	}
 
 	componentWillUnmount() {
-		this.unsubscribe();
-		this.authUnsubscribe();
+		this.unsubscribe && this.unsubscribe();
+		this.authUnsubscribe && this.authUnsubscribe();
 	}
 
 	// onSend(messages = []) {
@@ -198,7 +197,7 @@ export default class Chat extends React.Component {
 
 	render() {
 		let { bgcolor } = this.props.route.params; //destructure props and use as variables
-
+		const { user } = this.state;
 		return (
 			<View style={{ flex: 1, backgroundColor: bgcolor }}>
 				<Text>{this.state.loggedInText}</Text>
@@ -207,9 +206,7 @@ export default class Chat extends React.Component {
 					renderInputToolbar={this.renderInputToolbar.bind(this)}
 					messages={this.state.messages}
 					onSend={(messages) => this.onSend(messages)}
-					user={{
-						_id: 1,
-					}}
+					user={user}
 				/>
 				{/* check if android and do not let keyboard cover input field */}
 				{Platform.OS === "android" ? <KeyboardAvoidingView behavior="height" /> : null}
