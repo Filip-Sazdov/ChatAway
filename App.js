@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { StyleSheet, ScrollView, View, TextInput, Text, Alert, Button } from "react-native";
 
 import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
