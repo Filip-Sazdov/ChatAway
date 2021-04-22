@@ -22,7 +22,11 @@ import CustomActions from "./CustomActions";
 const firebase = require("firebase");
 require("firebase/firestore");
 
-LogBox.ignoreLogs(["Setting a timer for a long period of time"]);
+LogBox.ignoreLogs([
+  "Setting a timer for a long period of time",
+  "Animated.event now requires a second argument for options",
+  "Animated: `useNativeDriver` was not specified. This is a required option and must be explicitly set to `true` or `false`",
+]);
 
 export default class Chat extends React.Component {
   constructor() {
@@ -163,7 +167,6 @@ export default class Chat extends React.Component {
   }
 
   onSend(messages = []) {
-    console.log(messages);
     messages.forEach((message) => this.referenceChatMessages.add(message));
 
     this.setState(
