@@ -100,12 +100,10 @@ export default class CustomActions extends Component {
     try {
       const imageNameBefore = uri.split("/");
       const imageName = imageNameBefore[imageNameBefore.length - 1];
-      const ref = firebase.storage().ref().child(`images/${imageName}`); // console.log('ref', ref);
+      const ref = firebase.storage().ref().child(`images/${imageName}`);
       const snapshot = await ref.put(blob);
-      console.log("snapshot", snapshot);
       blob.close();
       const imageDownload = await snapshot.ref.getDownloadURL();
-      console.log(imageDownload);
       return imageDownload;
     } catch (e) {
       console.log(e);
