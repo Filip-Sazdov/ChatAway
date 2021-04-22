@@ -1,4 +1,5 @@
 # ChatAway
+
 Chat App built using React Native, Gifted Chat UI, and Google Firebase.
 
 The app lets you communicate, take and share pictures as well as share your location with your friends.
