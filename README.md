@@ -4,6 +4,10 @@ Chat App built using React Native, Gifted Chat UI, and Google Firebase.
 
 The app lets you communicate, take and share pictures as well as share your location with your friends.
 
+## Screenshot
+
+![image](https://user-images.githubusercontent.com/45643632/115762593-a502fb00-a371-11eb-86d0-3f1c4f512c94.png)
+
 ## Use
 
 To be able to use the app, one needs to download or clone this repository, and have Expo Go installed on one's mobile device.
@@ -23,7 +27,3 @@ Enjoy using the App.
 To be able to use a personal instance of Google Firabase, one would need an account with Google Firebase and a set of configuration data enabled when one creates a new project with Firestore.
 
 Substitute this data with the one found in the `const firebaseConfig`.
-
-## Screenshots
-
-![image](https://user-images.githubusercontent.com/45643632/115762593-a502fb00-a371-11eb-86d0-3f1c4f512c94.png)
